@@ -1,0 +1,10 @@
+[package]
+name = "hd"
+version = "0.1.0"
+authors = ["Michael Ekstrand <md@ekstrandom.net>"]
+edition = "2018"
+description = "Human-readable Display library"
+license = "MIT"
+license-file = "LICENSE.md"
+
+[dependencies]
