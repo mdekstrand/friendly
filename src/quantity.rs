@@ -5,7 +5,9 @@ use crate::scale::*;
 #[derive(Debug, Clone)]
 pub struct Quantity<Q, F: PrefixFamily> {
   value: Q,
-  scale: Scale<F>
+  scale: Scale<F>,
+  sfx_str: &'static str,
+  nsig: u32,
 }
 
 impl <Q> Quantity<Q, Decimal> {
@@ -27,7 +29,9 @@ impl <Q, F: PrefixFamily> Quantity<Q, F> {
   pub fn new(value: Q) -> Self {
     Quantity {
       value,
-      scale: Scale::Auto
+      scale: Scale::Auto,
+      sfx_str: "",
+      nsig: 4
     }
   }
 
@@ -58,7 +62,25 @@ impl <Q, F: PrefixFamily> Quantity<Q, F> {
   pub fn scale<F2: PrefixFamily, S: Into<Scale<F2>>>(self, scale: S) -> Quantity<Q, F2> {
     Quantity {
       value: self.value,
+      sfx_str: self.sfx_str,
+      nsig: self.nsig,
       scale: scale.into(),
+    }
+  }
+
+  /// Change the unit suffix on this quantity.
+  pub fn suffix(self, suffix: &'static str) -> Self {
+    Quantity {
+      sfx_str: suffix,
+      ..self
+    }
+  }
+
+  /// Change the significant figures on this quantity.
+  pub fn sig_figs(self, sf: u32) -> Self {
+    Quantity {
+      nsig: sf,
+      ..self
     }
   }
 }
