@@ -1,6 +1,7 @@
-use super::{Scale, ScaleScheme};
+use super::{Scale, Prefix, PrefixFamily};
 
 /// A decimal scale.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Decimal {
   pfx: &'static str,
   exp: i32,
@@ -32,7 +33,9 @@ impl Decimal {
   pub const ZETTA: Decimal = Decimal::new("Z", 21);
   pub const YOTTA: Decimal = Decimal::new("Y", 24);
 
-  pub const ALL_SCALES: &'static [&'static Decimal] = &[
+  pub const AUTO: Scale<Decimal> = Scale::Auto;
+
+  pub const ALL_PREFIXES: &'static [&'static Decimal] = &[
     &Decimal::YOCTO,
     &Decimal::ZEPTO,
     &Decimal::ATTO,
@@ -53,24 +56,34 @@ impl Decimal {
   ];
 }
 
-impl Scale for Decimal {
+impl Prefix for Decimal {
+  #[inline]
   fn base(&self) -> i32 {
     10
   }
 
+  #[inline]
   fn exponent(&self) -> i32 {
     self.exp
   }
 
-  fn prefix(&self) -> &'static str {
+  fn label(&self) -> &'static str {
     self.pfx
   }
 }
 
-impl ScaleScheme for Decimal {
-  type Scale = Decimal;
+impl PrefixFamily for Decimal {
+  type Prefix = Decimal;
 
-  fn all_scales() -> &'static [&'static Decimal] {
-    Decimal::ALL_SCALES
+  fn all_prefixes() -> &'static [&'static Decimal] {
+    Decimal::ALL_PREFIXES
   }
+}
+
+#[test]
+fn test_multipliers() {
+  assert_eq!(Decimal::UNIT.multiplier(), 1.0);
+  assert_eq!(Decimal::KILO.multiplier(), 1000.0);
+  assert_eq!(Decimal::MEGA.multiplier(), 1_000_000.0);
+  assert_eq!(Decimal::GIGA.multiplier(), 1_000_000_000.0);
 }

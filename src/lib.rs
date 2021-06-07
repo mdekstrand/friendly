@@ -1,3 +1,4 @@
 //! Human-readble Display library.
 
-pub mod scales;
+pub mod scale;
+pub mod quantity;

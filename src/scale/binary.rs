@@ -1,6 +1,7 @@
-use super::{Scale, ScaleScheme};
+use super::{Scale, Prefix, PrefixFamily};
 
 /// A binary scale.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Binary {
   pfx: &'static str,
   exp: i32,
@@ -23,7 +24,9 @@ impl Binary {
   pub const ZEBI: Binary = Binary::new("Zi", 70);
   pub const YOBI: Binary = Binary::new("Yi", 80);
 
-  pub const ALL_SCALES: &'static [&'static Binary] = &[
+  pub const AUTO: Scale<Binary> = Scale::Auto;
+
+  pub const ALL_PREFIXES: &'static [&'static Binary] = &[
     &Binary::UNIT,
     &Binary::KIBI,
     &Binary::MEBI,
@@ -36,24 +39,39 @@ impl Binary {
   ];
 }
 
-impl Scale for Binary {
+impl Prefix for Binary {
+  #[inline]
   fn base(&self) -> i32 {
     2
   }
 
+  #[inline]
   fn exponent(&self) -> i32 {
     self.exp
   }
 
-  fn prefix(&self) -> &'static str {
+  fn multiplier(&self) -> f64 {
+    let mult = 1 << self.exp;
+    mult as f64
+  }
+
+  fn label(&self) -> &'static str {
     self.pfx
   }
 }
 
-impl ScaleScheme for Binary {
-  type Scale = Binary;
+impl PrefixFamily for Binary {
+  type Prefix = Binary;
 
-  fn all_scales() -> &'static [&'static Binary] {
-    Binary::ALL_SCALES
+  fn all_prefixes() -> &'static [&'static Binary] {
+    Binary::ALL_PREFIXES
   }
+}
+
+#[test]
+fn test_multipliers() {
+  assert_eq!(Binary::UNIT.multiplier(), 1.0);
+  assert_eq!(Binary::KIBI.multiplier(), 1024.0);
+  assert_eq!(Binary::MEBI.multiplier(), 1024.0 * 1024.0);
+  assert_eq!(Binary::GIBI.multiplier(), 1024.0 * 1024.0 * 1024.0);
 }
