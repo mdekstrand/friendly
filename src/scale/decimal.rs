@@ -87,3 +87,13 @@ fn test_multipliers() {
   assert_eq!(Decimal::MEGA.multiplier(), 1_000_000.0);
   assert_eq!(Decimal::GIGA.multiplier(), 1_000_000_000.0);
 }
+
+#[test]
+fn test_unit_adjust() {
+  assert_eq!(Decimal::UNIT.scale_value(1250), 1250.0);
+}
+
+#[test]
+fn test_kilo_adjust() {
+  assert_eq!(Decimal::KILO.scale_value(1250), 1.250);
+}

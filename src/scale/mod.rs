@@ -22,6 +22,12 @@ pub trait Prefix: Debug + Clone + Copy + PartialEq {
     base.powi(exp)
   }
 
+  /// Rescale a value for this prefix.
+  fn scale_value<T: Into<f64>>(&self, value: T) -> f64 {
+    let x: f64 = value.into();
+    x / self.multiplier()
+  }
+
   /// Get the label for this prefix.
   fn label(&self) -> &'static str;
 }
