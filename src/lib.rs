@@ -18,9 +18,12 @@ pub mod sigfig;
 pub mod quantity;
 
 pub use quantity::Quantity;
+pub use scale::{Scale};
 use quantity::QVal;
 
-/// Display a number of bytes.  By default, this uses binary prefixes:
+/// Display a number of bytes.
+///
+/// By default, this uses binary prefixes:
 ///
 /// ```
 /// # use friendly::bytes;

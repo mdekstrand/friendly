@@ -19,6 +19,12 @@ impl <V: ToPrimitive + fmt::Display> QVal for V {
 }
 
 /// A numeric quantity to display.
+///
+/// `Quantity` is the core type for general display of numeric quantities that may
+/// be rescaled with prefixes, may have unit suffixes, etc.
+///
+/// By default, quantities are displayed with 4 significant figures and are auto-scaled.
+/// Individual convenience functions may provide different defaults.
 #[derive(Debug, Clone)]
 pub struct Quantity<Q: QVal, F: PrefixFamily> {
   value: Q,
@@ -162,5 +168,17 @@ mod test {
   fn test_kibibytes_ps() {
     let tq = Quantity::binary(182_421.0).suffix("B/s");
     assert_eq!(tq.to_string().as_str(), "178.1 KiB/s");
+  }
+
+  #[test]
+  fn test_small() {
+    let tq = Quantity::decimal(0.023477).scale(Decimal::UNIT);
+    assert_eq!(tq.to_string().as_str(), "0.02348");
+  }
+
+  #[test]
+  fn test_millis() {
+    let tq = Quantity::decimal(0.023477).suffix("s");
+    assert_eq!(tq.to_string().as_str(), "23.48 ms");
   }
 }
