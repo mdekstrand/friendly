@@ -13,6 +13,9 @@ The various functions provide quick ways to wrap values and types in the appropr
 objects to facilitate their display. Types such as [Quantity] then provide methods to
 further customize this presentation.
 
+Right now this crate supports a few useful types, but has much more to add. Contributions
+(via pull requests) are most welcome!  Please make sure you include tests, though.
+
 ## Features
 
 This crate supports some features:
