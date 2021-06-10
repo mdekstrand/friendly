@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 5a8572228a2052887199fa97696abe3b2414a206c30ee21de0fdb7d6fd82e69e # shrinks to p = Binary { pfx: "Ti", exp: 40 }

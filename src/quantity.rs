@@ -35,10 +35,6 @@ impl <Q, F: PrefixFamily> Quantity<Q, F> {
     }
   }
 
-  pub fn get_scale<'a>(&'a self) -> &'a Scale<F> {
-    &self.scale
-  }
-
   /// Configure this quantity with a different scale.
   ///
   /// The use of `Into` bounds allows this to rescale with either a fixed scale:
@@ -48,7 +44,7 @@ impl <Q, F: PrefixFamily> Quantity<Q, F> {
   /// # use hd::quantity::Quantity;
   /// let q = Quantity::decimal(10324);
   /// let q = q.scale(Decimal::KILO);
-  /// assert_eq!(q.get_scale(), &Scale::Fixed(Decimal::KILO));
+  /// assert_eq!(q.to_string().as_str(), "10.32 k");
   /// ```
   ///
   /// Or auto-scaling:
@@ -57,7 +53,7 @@ impl <Q, F: PrefixFamily> Quantity<Q, F> {
   /// # use hd::quantity::Quantity;
   /// let q = Quantity::decimal(10324);
   /// let q = q.scale(Decimal::AUTO);
-  /// assert_eq!(q.get_scale(), &Scale::Auto);
+  /// assert_eq!(q.to_string().as_str(), "10.32 k");
   /// ```
   pub fn scale<F2: PrefixFamily, S: Into<Scale<F2>>>(self, scale: S) -> Quantity<Q, F2> {
     Quantity {
@@ -82,5 +78,18 @@ impl <Q, F: PrefixFamily> Quantity<Q, F> {
       nsig: sf,
       ..self
     }
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::Quantity;
+  use crate::scale::*;
+
+  #[test]
+  fn test_decimal_quantity() {
+    let tq = Quantity::decimal(10);
+    assert_eq!(tq.value, 10);
+    assert_eq!(tq.scale, Scale::Auto);
   }
 }

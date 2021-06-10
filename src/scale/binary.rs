@@ -51,7 +51,7 @@ impl Prefix for Binary {
   }
 
   fn multiplier(&self) -> f64 {
-    let mult = 1 << self.exp;
+    let mult = 1u128 << self.exp;
     mult as f64
   }
 

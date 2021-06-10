@@ -3,6 +3,8 @@ use std::fmt::Debug;
 
 mod decimal;
 mod binary;
+#[cfg(test)]
+pub(crate) mod test;
 
 pub use decimal::Decimal;
 pub use binary::Binary;
@@ -43,7 +45,11 @@ pub trait PrefixFamily {
 /// A scale
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Scale<F: PrefixFamily> {
+  /// Auto-scale to the best-fitting prefix.
   Auto,
+  /// Display the number in its native scale.
+  Native,
+  /// Use a specific fixed prefix.
   Fixed(F::Prefix),
 }
 
