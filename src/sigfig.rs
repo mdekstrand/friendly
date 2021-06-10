@@ -9,7 +9,6 @@ pub fn sigscale(val: f64, sf: usize) -> (f64, usize) {
   if val.is_normal() {
     let sf = sf as i32;
     let log = val.abs().log10();
-    println!("log({}) = {}", val, log);
     let mut scale = log.ceil() as i32;
     if log == log.ceil() {
       scale = scale + 1; // we're exactly at the boundary

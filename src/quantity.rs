@@ -57,8 +57,8 @@ impl <Q: QVal, F: PrefixFamily> Quantity<Q, F> {
   /// The use of `Into` bounds allows this to rescale with either a fixed scale:
   ///
   /// ```
-  /// # use hd::scale::*;
-  /// # use hd::quantity::Quantity;
+  /// # use friendly::scale::*;
+  /// # use friendly::quantity::Quantity;
   /// let q = Quantity::decimal(10324);
   /// let q = q.scale(Decimal::KILO);
   /// assert_eq!(q.to_string().as_str(), "10.32 k");
@@ -66,8 +66,8 @@ impl <Q: QVal, F: PrefixFamily> Quantity<Q, F> {
   ///
   /// Or auto-scaling:
   /// ```
-  /// # use hd::scale::*;
-  /// # use hd::quantity::Quantity;
+  /// # use friendly::scale::*;
+  /// # use friendly::quantity::Quantity;
   /// let q = Quantity::decimal(10324);
   /// let q = q.scale(Decimal::AUTO);
   /// assert_eq!(q.to_string().as_str(), "10.32 k");

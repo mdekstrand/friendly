@@ -1,10 +1,11 @@
 [package]
-name = "hd"
+name = "friendly"
 version = "0.1.0"
 authors = ["Michael Ekstrand <md@ekstrandom.net>"]
 edition = "2018"
-description = "Human-readable Display library"
+description = "Human-friendly display library"
 license = "MIT"
+repository = "https://github.com/mdekstrand/friendly"
 
 [dependencies]
 num-traits = "0.2"
