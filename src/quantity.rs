@@ -1,30 +1,45 @@
 //! General-purpose quantities with scales.
+use std::f64::NAN;
+use std::fmt;
 use crate::scale::*;
+use num_traits::ToPrimitive;
+
+/// Trait for values for a quantity.
+pub trait QVal: fmt::Display {
+  /// Convert to a floating-point value.
+  fn as_float(&self) -> f64;
+}
+
+impl <V: ToPrimitive + fmt::Display> QVal for V {
+  fn as_float(&self) -> f64 {
+    self.to_f64().unwrap_or(NAN)
+  }
+}
 
 /// A numeric quantity to display.
 #[derive(Debug, Clone)]
-pub struct Quantity<Q, F: PrefixFamily> {
+pub struct Quantity<Q: QVal, F: PrefixFamily> {
   value: Q,
   scale: Scale<F>,
   sfx_str: &'static str,
   nsig: u32,
 }
 
-impl <Q> Quantity<Q, Decimal> {
+impl <Q: QVal> Quantity<Q, Decimal> {
   /// Create a new auto-scaled decimal quantity.
   pub fn decimal(value: Q) -> Self {
     Quantity::new(value)
   }
 }
 
-impl <Q> Quantity<Q, Binary> {
+impl <Q: QVal> Quantity<Q, Binary> {
   /// Create a new auto-scaled binary quantity.
   pub fn binary(value: Q) -> Self {
     Quantity::new(value)
   }
 }
 
-impl <Q, F: PrefixFamily> Quantity<Q, F> {
+impl <Q: QVal, F: PrefixFamily> Quantity<Q, F> {
   /// Create a new auto-scaled quantity of arbitrary prefix type.
   pub fn new(value: Q) -> Self {
     Quantity {
@@ -78,6 +93,12 @@ impl <Q, F: PrefixFamily> Quantity<Q, F> {
       nsig: sf,
       ..self
     }
+  }
+}
+
+impl <Q: QVal, F: PrefixFamily> fmt::Display for Quantity<Q, F> {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "{}", self.value)
   }
 }
 

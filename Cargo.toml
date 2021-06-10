@@ -7,6 +7,7 @@ description = "Human-readable Display library"
 license = "MIT"
 
 [dependencies]
+num-traits = "0.2"
 
 [dev-dependencies]
 proptest = "1"
