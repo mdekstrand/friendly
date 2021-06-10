@@ -31,6 +31,7 @@ pub struct Quantity<Q: QVal, F: PrefixFamily> {
   scale: Scale<F>,
   sfx_str: &'static str,
   nsig: u32,
+  spc: bool,
 }
 
 impl <Q: QVal> Quantity<Q, Decimal> {
@@ -54,7 +55,8 @@ impl <Q: QVal, F: PrefixFamily> Quantity<Q, F> {
       value,
       scale: Scale::Auto,
       sfx_str: "",
-      nsig: 4
+      nsig: 4,
+      spc: true
     }
   }
 
@@ -84,6 +86,7 @@ impl <Q: QVal, F: PrefixFamily> Quantity<Q, F> {
       sfx_str: self.sfx_str,
       nsig: self.nsig,
       scale: scale.into(),
+      spc: self.spc,
     }
   }
 
@@ -91,6 +94,14 @@ impl <Q: QVal, F: PrefixFamily> Quantity<Q, F> {
   pub fn suffix(self, suffix: &'static str) -> Self {
     Quantity {
       sfx_str: suffix,
+      ..self
+    }
+  }
+
+  /// Change whether to include a space before units.
+  pub fn space(self, spc: bool) -> Self {
+    Quantity {
+      spc,
       ..self
     }
   }
@@ -115,14 +126,16 @@ impl <Q: QVal, F: PrefixFamily> fmt::Display for Quantity<Q, F> {
       let (sv, prec) = sigscale(sv, self.nsig as usize);
       write!(f, "{:.*}", prec, sv)?;
       let sl = scale.label();
-      if !sl.is_empty() || !self.sfx_str.is_empty() {
-        write!(f, " {}{}", sl, self.sfx_str)?;
+      if self.spc && (!sl.is_empty() || !self.sfx_str.is_empty()) {
+        write!(f, " ")?;
       }
+      write!(f, "{}{}", sl, self.sfx_str)?;
     } else {
       write!(f, "{}", self.value)?;
-      if !self.sfx_str.is_empty() {
-        write!(f, " {}", self.sfx_str)?;
+      if self.spc && !self.sfx_str.is_empty() {
+        write!(f, " ")?;
       }
+      write!(f, " {}", self.sfx_str)?;
     }
     Ok(())
   }

@@ -16,9 +16,12 @@
 pub mod scale;
 pub mod sigfig;
 pub mod quantity;
+pub mod temporal;
 
 pub use quantity::Quantity;
 pub use scale::{Scale};
+pub use temporal::{duration, seconds};
+
 use quantity::QVal;
 
 /// Display a number of bytes.
@@ -41,4 +44,9 @@ use quantity::QVal;
 /// ```
 pub fn bytes<V: QVal>(val: V) -> Quantity<V, scale::Binary> {
   Quantity::binary(val).suffix("B")
+}
+
+/// An ordinary auto-scaleld value.
+pub fn scalar<V: QVal>(val: V) -> Quantity<V, scale::Decimal> {
+  Quantity::decimal(val)
 }
