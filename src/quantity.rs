@@ -1,8 +1,10 @@
 //! General-purpose quantities with scales.
 use std::f64::NAN;
 use std::fmt;
-use crate::scale::*;
 use num_traits::ToPrimitive;
+
+use crate::scale::*;
+use crate::sigfig::*;
 
 /// Trait for values for a quantity.
 pub trait QVal: fmt::Display {
@@ -104,9 +106,10 @@ impl <Q: QVal, F: PrefixFamily> fmt::Display for Quantity<Q, F> {
       Scale::Fixed(s) => Some((s.scale_value(self.value.as_float()), s)),
     };
     if let Some((sv, scale)) = scaled {
-      write!(f, "{}", sv)?;
+      let (sv, prec) = sigscale(sv, self.nsig as usize);
+      write!(f, "{:.*}", prec, sv)?;
       let sl = scale.label();
-      if !sl.is_empty() && !self.sfx_str.is_empty() {
+      if !sl.is_empty() || !self.sfx_str.is_empty() {
         write!(f, " {}{}", sl, self.sfx_str)?;
       }
     } else {
@@ -134,13 +137,19 @@ mod test {
   #[test]
   fn test_zero() {
     let tq = Quantity::decimal(0);
-    assert_eq!(tq.to_string().as_str(), "0.000");
+    assert_eq!(tq.to_string().as_str(), "0.0000");
   }
 
   #[test]
   fn test_zero_sfx() {
     let tq = Quantity::decimal(0).suffix("B");
-    assert_eq!(tq.to_string().as_str(), "0.000 B");
+    assert_eq!(tq.to_string().as_str(), "0.0000 B");
+  }
+
+  #[test]
+  fn test_zero_sfx_sf() {
+    let tq = Quantity::decimal(0).suffix("B").sig_figs(2);
+    assert_eq!(tq.to_string().as_str(), "0.00 B");
   }
 
   #[test]
