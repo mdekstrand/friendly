@@ -63,6 +63,10 @@ impl Prefix for Binary {
 impl PrefixFamily for Binary {
   type Prefix = Binary;
 
+  fn unit_prefix() -> Binary {
+    Binary::UNIT
+  }
+
   fn all_prefixes() -> &'static [&'static Binary] {
     Binary::ALL_PREFIXES
   }

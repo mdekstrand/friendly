@@ -36,10 +36,37 @@ pub trait Prefix: Debug + Clone + Copy + PartialEq {
 
 /// Trait for a collection of (related) prefixes.
 pub trait PrefixFamily {
-  type Prefix: Prefix;
+  type Prefix: Prefix + 'static;
+
+  fn unit_prefix() -> Self::Prefix;
 
   /// Get all prefixes for this scheme.  The prefixes must be in sorted order.
   fn all_prefixes() -> &'static [&'static Self::Prefix];
+
+  /// Auto-scale a value.
+  fn autoscale(val: f64) -> (f64, Self::Prefix) {
+    if !val.is_finite() || !val.is_normal() {
+      // non-finite values just get displayed, as does ~0
+      return (val, Self::unit_prefix())
+    }
+
+    let pfxs = Self::all_prefixes();
+    let mut iter = pfxs.iter();
+    // always have at least one
+    let mut cur = iter.next().unwrap();
+    while let Some(next) = iter.next() {
+      // check fit w.r.t. next
+      if next.scale_value(val).abs() < 1.0 {
+        // next is too small, 'cur' is what we want
+        break;
+      } else {
+        // save and let's try the next value
+        cur = next;
+      }
+    }
+
+    (cur.scale_value(val), **cur)
+  }
 }
 
 /// A scale

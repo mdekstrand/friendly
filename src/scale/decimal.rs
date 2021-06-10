@@ -75,6 +75,10 @@ impl Prefix for Decimal {
 impl PrefixFamily for Decimal {
   type Prefix = Decimal;
 
+  fn unit_prefix() -> Decimal {
+    Decimal::UNIT
+  }
+
   fn all_prefixes() -> &'static [&'static Decimal] {
     Decimal::ALL_PREFIXES
   }
