@@ -98,7 +98,24 @@ impl <Q: QVal, F: PrefixFamily> Quantity<Q, F> {
 
 impl <Q: QVal, F: PrefixFamily> fmt::Display for Quantity<Q, F> {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}", self.value)
+    let scaled = match self.scale {
+      Scale::Native => None,
+      Scale::Auto => Some(F::autoscale(self.value.as_float())),
+      Scale::Fixed(s) => Some((s.scale_value(self.value.as_float()), s)),
+    };
+    if let Some((sv, scale)) = scaled {
+      write!(f, "{}", sv)?;
+      let sl = scale.label();
+      if !sl.is_empty() && !self.sfx_str.is_empty() {
+        write!(f, " {}{}", sl, self.sfx_str)?;
+      }
+    } else {
+      write!(f, "{}", self.value)?;
+      if !self.sfx_str.is_empty() {
+        write!(f, " {}", self.sfx_str)?;
+      }
+    }
+    Ok(())
   }
 }
 
@@ -112,5 +129,29 @@ mod test {
     let tq = Quantity::decimal(10);
     assert_eq!(tq.value, 10);
     assert_eq!(tq.scale, Scale::Auto);
+  }
+
+  #[test]
+  fn test_zero() {
+    let tq = Quantity::decimal(0);
+    assert_eq!(tq.to_string().as_str(), "0.000");
+  }
+
+  #[test]
+  fn test_zero_sfx() {
+    let tq = Quantity::decimal(0).suffix("B");
+    assert_eq!(tq.to_string().as_str(), "0.000 B");
+  }
+
+  #[test]
+  fn test_megawatts() {
+    let tq = Quantity::decimal(15_250_000.0).suffix("W");
+    assert_eq!(tq.to_string().as_str(), "15.25 MW");
+  }
+
+  #[test]
+  fn test_kibibytes_ps() {
+    let tq = Quantity::binary(182_421.0).suffix("B/s");
+    assert_eq!(tq.to_string().as_str(), "178.1 KiB/s");
   }
 }
