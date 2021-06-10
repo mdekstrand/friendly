@@ -1,5 +1,8 @@
+//! Human-readable time features.
 use std::fmt;
 use std::time::Duration;
+#[cfg(feature="chrono")]
+use chrono;
 
 use crate::scalar;
 
@@ -25,6 +28,13 @@ pub struct HumanDuration {
 impl From<Duration> for HumanDuration {
   fn from(d: Duration) -> HumanDuration {
     HumanDuration::new_from_secs(d.as_secs_f64())
+  }
+}
+
+#[cfg(feature="chrono")]
+impl From<chrono::Duration> for HumanDuration {
+  fn from(d: chrono::Duration) -> HumanDuration {
+    seconds(d.num_milliseconds() as f64 * 0.001)
   }
 }
 
@@ -171,4 +181,12 @@ fn test_hm() {
 fn test_hms_full() {
   let d = seconds(5.0 * 3600.0 + 32.0 * 60.0 + 10.5).compact(false);
   assert_eq!(d.to_string().as_str(), "5 hours 32 minutes 10.50 seconds");
+}
+
+#[cfg(feature="chrono")]
+#[test]
+fn test_chrono() {
+  let dur = chrono::Duration::seconds(1042) + chrono::Duration::milliseconds(314);
+  let d = duration(dur);
+  assert_eq!(d.to_string().as_str(), "17m22.31s");
 }

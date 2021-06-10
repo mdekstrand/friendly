@@ -12,6 +12,12 @@
 //! The various functions provide quick ways to wrap values and types in the appropriate
 //! objects to facilitate their display. Types such as [Quantity] then provide methods to
 //! further customize this presentation.
+//!
+//! ## Features
+//!
+//! This crate supports some features:
+//!
+//! - `chrono` — enables support for types from the Chrono crate (currently just [chrono::Duration])
 
 pub mod scale;
 pub mod sigfig;
@@ -46,7 +52,7 @@ pub fn bytes<V: QVal>(val: V) -> Quantity<V, scale::Binary> {
   Quantity::binary(val).suffix("B")
 }
 
-/// An ordinary auto-scaleld value.
+/// An ordinary auto-scaled value.
 pub fn scalar<V: QVal>(val: V) -> Quantity<V, scale::Decimal> {
   Quantity::decimal(val)
 }
