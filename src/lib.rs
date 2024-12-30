@@ -19,13 +19,13 @@
 //!
 //! - `chrono` — enables support for types from the Chrono crate (currently just [chrono::Duration])
 
+pub mod quantity;
 pub mod scale;
 pub mod sigfig;
-pub mod quantity;
 pub mod temporal;
 
 pub use quantity::Quantity;
-pub use scale::{Scale};
+pub use scale::Scale;
 pub use temporal::{duration, seconds};
 
 use quantity::QVal;
@@ -49,10 +49,10 @@ use quantity::QVal;
 /// assert_eq!(kb.as_str(), "13.20 kB")
 /// ```
 pub fn bytes<V: QVal>(val: V) -> Quantity<V, scale::Binary> {
-  Quantity::binary(val).suffix("B")
+    Quantity::binary(val).suffix("B")
 }
 
 /// An ordinary auto-scaled value.
 pub fn scalar<V: QVal>(val: V) -> Quantity<V, scale::Decimal> {
-  Quantity::decimal(val)
+    Quantity::decimal(val)
 }

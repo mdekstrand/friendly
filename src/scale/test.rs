@@ -1,6 +1,6 @@
+use approx::*;
 use proptest::prelude::*;
 use proptest::sample::*;
-use approx::*;
 
 use super::binary::Binary;
 use super::decimal::Decimal;
@@ -8,7 +8,7 @@ use super::decimal::Decimal;
 use super::*;
 
 pub fn arb_prefix<T: PrefixFamily>() -> Select<&'static T::Prefix> {
-  select(T::all_prefixes())
+    select(T::all_prefixes())
 }
 
 proptest! {
