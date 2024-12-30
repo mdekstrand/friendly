@@ -49,10 +49,15 @@ use quantity::QVal;
 /// assert_eq!(kb.as_str(), "13.20 kB")
 /// ```
 pub fn bytes<V: QVal>(val: V) -> Quantity<V, scale::Binary> {
-    Quantity::binary(val).suffix("B")
+    Quantity::binary(val).suffix("B").integral(true)
 }
 
 /// An ordinary auto-scaled value.
 pub fn scalar<V: QVal>(val: V) -> Quantity<V, scale::Decimal> {
     Quantity::decimal(val)
+}
+
+/// An ordinary auto-scaled integer value.
+pub fn integer<V: QVal>(val: V) -> Quantity<V, scale::Decimal> {
+    Quantity::decimal(val).integral(true)
 }

@@ -89,6 +89,7 @@ impl<Q: QVal, F: PrefixFamily> Quantity<Q, F> {
             nsig: self.nsig,
             scale: scale.into(),
             spc: self.spc,
+            integral: self.integral,
         }
     }
 
@@ -105,7 +106,7 @@ impl<Q: QVal, F: PrefixFamily> Quantity<Q, F> {
         Quantity { spc, ..self }
     }
 
-    /// Change the significant figures on this quantity.
+    /// Change the number of significant figures on this quantity.
     pub fn sig_figs(self, sf: u32) -> Self {
         Quantity { nsig: sf, ..self }
     }
@@ -126,6 +127,8 @@ impl<Q: QVal, F: PrefixFamily> fmt::Display for Quantity<Q, F> {
             Scale::Auto => Some(F::autoscale(self.value.as_float())),
             Scale::Fixed(s) => Some((s.scale_value(self.value.as_float()), s)),
         };
+        // don't rescale unscaled integral values
+        let scaled = scaled.filter(|(_v, pfx)| pfx.exponent() != 0 || !self.integral);
         if let Some((sv, scale)) = scaled {
             let (sv, prec) = sigscale(sv, self.nsig as usize);
             write!(f, "{:.*}", prec, sv)?;
@@ -139,7 +142,7 @@ impl<Q: QVal, F: PrefixFamily> fmt::Display for Quantity<Q, F> {
             if self.spc && !self.sfx_str.is_empty() {
                 write!(f, " ")?;
             }
-            write!(f, " {}", self.sfx_str)?;
+            write!(f, "{}", self.sfx_str)?;
         }
         Ok(())
     }
